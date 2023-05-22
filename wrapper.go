@@ -49,12 +49,21 @@ func SheetView() ExcelizeWrapperOption {
 	}
 }
 
-func NewExcelizeWrapper(options ...ExcelizeWrapperOption) Wrapper {
+type CloseFunc = func() error
+
+func NewExcelizeWrapper(options ...ExcelizeWrapperOption) (Wrapper, CloseFunc) {
 	f := excelize.NewFile()
 	for _, option := range options {
 		option(f)
 	}
-	return &wrapper{f: f}
+	return &wrapper{f: f}, func() error {
+		if f != nil {
+			if err := f.Close(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}
 }
 
 type Wrapper interface {
