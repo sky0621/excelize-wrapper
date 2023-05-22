@@ -68,7 +68,7 @@ func NewExcelizeWrapper(options ...ExcelizeWrapperOption) (Wrapper, CloseFunc) {
 
 type Wrapper interface {
 	Set(position string, val any)
-	Get(position string) (any, error)
+	Get(position string) (string, error)
 	Merge(from, to string)
 	Height(row int, h float64)
 	Width(cell string, wd float64)
@@ -97,10 +97,10 @@ func (w *wrapper) Set(position string, val interface{}) {
 	}
 }
 
-func (w *wrapper) Get(targetCell string) (any, error) {
+func (w *wrapper) Get(targetCell string) (string, error) {
 	already, err := w.f.GetCellValue(getDefaultSheetName(w.f), targetCell)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	return already, nil
 }
