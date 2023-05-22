@@ -70,7 +70,8 @@ type Wrapper interface {
 	Set(position string, val any)
 	Merge(from, to string)
 	Height(row int, h float64)
-	Width(start, end string, wd float64)
+	Width(cell string, wd float64)
+	RangeWidth(start, end string, wd float64)
 	Text(cell string, settings []excelize.RichTextRun)
 	CellStyle(cell string, style *excelize.Style)
 	CellRangeStyle(start, end string, style *excelize.Style)
@@ -107,7 +108,13 @@ func (w *wrapper) Height(row int, h float64) {
 	}
 }
 
-func (w *wrapper) Width(start, end string, wd float64) {
+func (w *wrapper) Width(cell string, wd float64) {
+	if err := w.f.SetColWidth(getDefaultSheetName(w.f), cell, cell, wd); err != nil {
+		panic(err)
+	}
+}
+
+func (w *wrapper) RangeWidth(start, end string, wd float64) {
 	if err := w.f.SetColWidth(getDefaultSheetName(w.f), start, end, wd); err != nil {
 		panic(err)
 	}
